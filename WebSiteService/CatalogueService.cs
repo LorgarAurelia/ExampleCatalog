@@ -7,8 +7,8 @@ namespace TestCatalogue.WebSiteService
 {
     public class CatalogueService : ICatalogueService
     {
-        private IExampleRepository _repo;
-        public CatalogueService(IExampleRepository repository)
+        private IRepository _repo;
+        public CatalogueService(IRepository repository)
         {
             _repo = repository;
         }
@@ -35,8 +35,11 @@ namespace TestCatalogue.WebSiteService
         {
             var fieldInCategory = _repo.GetCategories().Where(c => c.Id == categoryId).First().SpecificationsFields;
 
-            GoodsCreationForm form = new();
-            form.CategoryId = categoryId;
+            GoodsCreationForm form = new()
+            {
+                CategoryId = categoryId
+            };
+
             foreach (var field in fieldInCategory)
             {
                 form.Specifications.Add(new() { Name = field, Content = "Enter your text here" });

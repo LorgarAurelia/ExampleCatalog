@@ -2,7 +2,7 @@
 
 namespace TestCatalogue.Database
 {
-    public interface IExampleRepository
+    public interface IRepository
     {
         void AddGoods(Goods goodsTitle, GoodsContent content);
         void AddCategory(Category category);

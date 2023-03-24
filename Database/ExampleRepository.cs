@@ -3,7 +3,7 @@ using TestCatalogue.Exceptions;
 
 namespace TestCatalogue.Database
 {
-    public class ExampleRepository : IExampleRepository
+    public class ExampleRepository : IRepository
     {
         private List<Category> _exampleOfCategories = new()
         {
