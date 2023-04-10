@@ -1,5 +1,5 @@
 ﻿using TestCatalogue.Database;
-using TestCatalogue.Database.Models;
+using TestCatalogue.Database.SQLModels;
 using TestCatalogue.DTO;
 using TestCatalogue.Exceptions;
 
@@ -13,17 +13,18 @@ namespace TestCatalogue.WebSiteService
             _repo = repository;
         }
 
-        public Responce<Category> ShowAllCategories() => new() { Body = _repo.GetCategories() };
-        public Responce<string> CreateCategory(CategoryCreationForm category)
+        public async Task<Responce<Category>> ShowAllCategories() => new() { Body = await _repo.GetCategories() };
+        public async Task<Responce<string>> CreateCategory(CategoryCreationForm category)
         {
-            _repo.AddCategory(new() { Name = category.CategoryName, SpecificationsFields = category.CategoryFields.ToList() });
+            await _repo.AddCategory(new() { Name = category.CategoryName}, category.ConvertToModels());
+
             return new() { Body = new() { "Ok" } };
         }
-        public Responce<string> DeleteCategory(int categoryId)
+        public async Task<Responce<string>> DeleteCategory(int categoryId)
         {
             try
             {
-                _repo.DeleteCategory(categoryId);
+                await _repo.DeleteCategory(categoryId);
                 return new() { Body = new() { "Ok" } };
             }
             catch (NullResultException ex)
@@ -31,56 +32,62 @@ namespace TestCatalogue.WebSiteService
                 return new() { Body = new() { ex.Message } };
             }
         }
-        public Responce<GoodsCreationForm> CreateGoodsForm(int categoryId)
+        public async Task<Responce<GoodsCreationForm>> CreateGoodsForm(int categoryId)
         {
-            var fieldInCategory = _repo.GetCategories().Where(c => c.Id == categoryId).First().SpecificationsFields;
+            var fieldInCategory = _repo.GetCategoryFields(categoryId);
 
             GoodsCreationForm form = new()
             {
                 CategoryId = categoryId
             };
 
-            foreach (var field in fieldInCategory)
+            foreach (var field in await fieldInCategory)
             {
-                form.Specifications.Add(new() { Name = field, Content = "Enter your text here" });
+                form.Specifications.Add(new() { Name = field.Name, Content = "Enter your text here" });
             }
 
             return new() { Body = new() { form } };
         }
 
-        public Responce<string> CreateGoods(GoodsCreationForm goodsData)
+        public async Task<Responce<string>> CreateGoods(GoodsCreationForm goodsData)
         {
-            Goods goodsTitle = new()
+            Good goodsTitle = new()
             {
                 CategoryId = goodsData.CategoryId,
                 Name = goodsData.Name,
                 Cost = goodsData.Cost
             };
+
             GoodsContent content = new()
             {
-                Description = goodsData.Description,
-                Specifications = goodsData.Specifications
+                Description = goodsData.Description
             };
 
-            _repo.AddGoods(goodsTitle, content);
+            List<Specification> specifications = new();
+            foreach (var specification in goodsData.Specifications)
+            {
+                specifications.Add(new() { Name = specification.Name, Content = specification.Content });
+            }
+            
 
+            await _repo.AddGoods(goodsTitle, content,specifications);
+            
             return new() { Body = new() { "Ok" } };
         }
 
-        public Responce<Goods> ShowAllGoods(int categoryId = 0)
+        public async Task<Responce<Good>> ShowAllGoods(int categoryId = 0)
         {
             if (categoryId == 0)
-                return new() { Body = _repo.GetGoods() };
+                return new() { Body = await _repo.GetGoods() };
             else
-            {
-                var goodsPerCategory = _repo.GetGoods().Where(g => g.CategoryId == categoryId).ToList();
-                return new() { Body = goodsPerCategory };
-            }
+                return new() { Body = { await _repo.GetGoodById(categoryId) } };
         }
-        public Responce<GoodsContent> ShowFullGoodsData(int goodsId)
+        public async Task<Responce<GoodsDetails>> ShowFullGoodsData(int goodsId)
         {
-            var goodsData = _repo.GetContent(goodsId);
-            return new() { Body = new() { goodsData } };
+            var goodsData = await _repo.GetContent(goodsId);
+            var specifications = await _repo.GetSpecifications(goodsData.Id);
+
+            return new() { Body = new() { new(specifications, goodsData) } };
         }
     }
 }

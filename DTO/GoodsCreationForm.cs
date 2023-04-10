@@ -6,7 +6,7 @@ namespace TestCatalogue.DTO
     {
         public string Name { get; set; }
         public int CategoryId { get; set; }
-        public decimal Cost { get; set; }
+        public double Cost { get; set; }
         public string Description { get; set; }
         public List<GoodsSpecification> Specifications { get; set; }
         public GoodsCreationForm()

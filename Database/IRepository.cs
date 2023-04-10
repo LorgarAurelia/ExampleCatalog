@@ -1,16 +1,20 @@
-﻿using TestCatalogue.Database.Models;
+﻿using TestCatalogue.Database.SQLModels;
 
 namespace TestCatalogue.Database
 {
     public interface IRepository
     {
-        void AddGoods(Goods goodsTitle, GoodsContent content);
-        void AddCategory(Category category);
-        void DeleteCategory(int categoryId);
-        void DeleteGoods(int goodsId);
-        List<Category> GetCategories();
-        GoodsContent GetContent(int goodsId);
-        List<Goods> GetGoods();
-        void AddSpecification(GoodsSpecification specification, int goodsId);
+        Task AddGoods(Good goodsTitle, GoodsContent content, List<Specification> specifications);
+        Task AddCategory(Category category, List<CategorySpecificationsField> specifications);
+        Task DeleteCategory(int categoryId);
+        Task DeleteGoods(int goodsId);
+        Task<List<Category>> GetCategories();
+        Task<GoodsContent> GetContent(int goodsId);
+        Task<List<Good>> GetGoods();
+        Task<Good> GetGoodById(int categoryId);
+        Task<List<CategorySpecificationsField>> GetCategoryFields(int categoryId);
+        Task<List<Specification>> GetSpecifications(int contentId);
+        //Task AddCategorySpecifications(CategorySpecificationsField specification);
+        //void AddSpecification(Specification specification, int goodsId);
     }
 }

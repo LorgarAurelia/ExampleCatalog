@@ -6,7 +6,7 @@
 
         public Responce()
         {
-            
+            Body = new List<T>();
         }
     }
 }

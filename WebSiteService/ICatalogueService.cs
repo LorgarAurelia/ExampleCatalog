@@ -1,16 +1,16 @@
-﻿using TestCatalogue.Database.Models;
+﻿using TestCatalogue.Database.SQLModels;
 using TestCatalogue.DTO;
 
 namespace TestCatalogue.WebSiteService
 {
     public interface ICatalogueService
     {
-        Responce<string> CreateCategory(CategoryCreationForm category);
-        Responce<string> CreateGoods(GoodsCreationForm goodsData);
-        Responce<GoodsCreationForm> CreateGoodsForm(int categoryId);
-        Responce<string> DeleteCategory(int categoryId);
-        Responce<Category> ShowAllCategories();
-        Responce<Goods> ShowAllGoods(int categoryId = 0);
-        Responce<GoodsContent> ShowFullGoodsData(int goodsId);
+        Task<Responce<string>> CreateCategory(CategoryCreationForm category);
+        Task<Responce<string>> CreateGoods(GoodsCreationForm goodsData);
+        Task<Responce<GoodsCreationForm>> CreateGoodsForm(int categoryId);
+        Task<Responce<string>> DeleteCategory(int categoryId);
+        Task<Responce<Category>> ShowAllCategories();
+        Task<Responce<Good>> ShowAllGoods(int categoryId = 0);
+        Task<Responce<GoodsDetails>> ShowFullGoodsData(int goodsId);
     }
 }

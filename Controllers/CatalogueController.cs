@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using TestCatalogue.DTO;
+using TestCatalogue.Exceptions;
 using TestCatalogue.WebSiteService;
 
 namespace TestCatalogue.Controllers
@@ -19,51 +20,102 @@ namespace TestCatalogue.Controllers
 
         [HttpGet]
         [Route("/category")]
-        public IActionResult GetCategory()
+        public async Task<IActionResult> GetCategory()
         {
-            return Ok(_service.ShowAllCategories());
+            try
+            {
+                return Ok(await _service.ShowAllCategories());
+            }
+            catch (NullResultException ex)
+            {
+                return Ok(new Responce<string>() { Body = new() { ex.Message} });
+            }
         }
 
         [HttpPost]
         [Route("/category")]
-        public IActionResult PostCategory(CategoryCreationForm category)
+        public async Task<IActionResult> PostCategory(CategoryCreationForm category)
         {
-            return Ok(_service.CreateCategory(category));
+            try
+            {
+                return Ok( await _service.CreateCategory(category));
+            }
+            catch (NullResultException ex)
+            {
+                return Ok(new Responce<string>() { Body = new() { ex.Message } });
+            }
+            
         }
 
         [HttpPost]
         [Route("/deleteCategory")]
-        public IActionResult DeleteCategory(int categoryId)
+        public async Task<IActionResult> DeleteCategory(int categoryId)
         {
-            return Ok(_service.DeleteCategory(categoryId));
+            try
+            {
+                return Ok(await _service.DeleteCategory(categoryId));
+            }
+            catch (NullResultException ex)
+            {
+                return Ok(new Responce<string>() { Body = new() { ex.Message } });
+            }
+            
         }
 
         [HttpGet]
         [Route("/getGoodsForm")]
-        public IActionResult GetGoodsForm(int categoryId)
+        public async Task<IActionResult> GetGoodsForm(int categoryId)
         {
-            return Ok(_service.CreateGoodsForm(categoryId));
+            try
+            {
+                return Ok( await _service.CreateGoodsForm(categoryId));
+            }
+            catch (NullResultException ex)
+            {
+                return Ok(new Responce<string>() { Body = new() { ex.Message } });
+            }
         }
 
         [HttpPost]
         [Route("/goods")]
-        public IActionResult PostGoods(GoodsCreationForm goods)
+        public async Task<IActionResult> PostGoods(GoodsCreationForm goods)
         {
-            return Ok(_service.CreateGoods(goods));
+            try
+            {
+                return Ok(await _service.CreateGoods(goods));
+            }
+            catch (NullResultException ex)
+            {
+                return Ok(new Responce<string>() { Body = new() { ex.Message } });
+            }
         }
 
         [HttpGet]
         [Route("/goods")]
-        public IActionResult GetGoods([FromQuery] int categoryId = 0)
+        public async Task<IActionResult> GetGoods([FromQuery] int categoryId = 0)
         {
-            return Ok(_service.ShowAllGoods(categoryId));
+            try
+            {
+                return Ok(await _service.ShowAllGoods(categoryId));
+            }
+            catch (NullResultException ex)
+            {
+                return Ok(new Responce<string>() { Body = new() { ex.Message } });
+            }
         }
 
         [HttpGet]
         [Route("/goods/id")]
-        public IActionResult GetGoodsFullData([FromQuery][Required] int goodsId)
-        {
-            return Ok(_service.ShowFullGoodsData(goodsId));
+        public async Task<IActionResult> GetGoodsFullData([FromQuery][Required] int goodsId)
+        {  
+            try
+            {
+                return Ok( await _service.ShowFullGoodsData(goodsId));
+            }
+            catch (NullResultException ex)
+            {
+                return Ok(new Responce<string>() { Body = new() { ex.Message } });
+            }
         }
     }
 }
